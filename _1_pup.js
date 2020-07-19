@@ -23,15 +23,20 @@ let scrape = async () => {
     fs.writeFileSync('web.html', websiteContent)
     const $ = cheerio.load(websiteContent)
     let x = $('[data-qa-locator] a')
-
+    let y = $('[data-qa-locator] a').toArray()
     let arrs = []
-    x.each(() => {
-        var text = $(this).text();
-        var link = "http:" + $(this).attr('href');
-        arrs.push({ text, link })
-    })
-    fs.writeFileSync('db.json', JSON.stringify(arrs) )
 
+    for (const _y of y) {
+        let $$ = cheerio.load(_y)
+        let a = $$('a')
+            const text = a.eq(0).text()
+            const link = `http:${a.eq(0).attr('href')}`
+            if (text) {
+                console.log(text, link)
+                arrs.push({ text, link })
+            }
+    }
+    fs.writeFileSync('db.json', JSON.stringify(arrs) )
     await browser.close();
 
 };
